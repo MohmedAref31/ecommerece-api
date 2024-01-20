@@ -4,9 +4,42 @@ const ErrorClass = require("../utiles/ErrorClass.utiles");
 const Order = require("../models/order.model")
 const Cart = require("../models/cart.model");
 const Product = require("../models/product.model");
+const User = require("../models/user.model")
 const { getDocumentById, getAll } = require("../utiles/handlers.utiles");
 
+const createOrder = async (session)=>{
+    const cartId = session.client_reference_id;
+    const shippingAddress = session.metadata;
+    const orderPrice = session.amount_total / 100;
 
+    const cart = await Cart.findById(cartId);
+    const user = await User.findOne({email:session.customer_email});
+
+    const order = await Order.create({
+        user:user._id,
+        cartItems:cart.cartItems,
+        shippingAddress,
+        totalOrderPrice:orderPrice,
+        isPaid:true,
+        paidAt:Date.now(),
+        paymentMethod:'card',
+    })
+
+    if(order){
+        const bulkOptions = cart.cartItems.map(item=>({
+            updateOne:{
+                filter:{_id:item.product},
+                update:{$inc:{quantity:-item.quantity, sold:+item.quantity}}
+            }
+        }))
+    
+       await Product.bulkWrite(bulkOptions,{});
+    
+        // clear the cart with cartId  
+       await Cart.findByIdAndDelete(cartId) 
+        }
+    
+}
 
 exports.createCashOrder = asyncHandler( async (req,res,next)=>{
     // 1- get cart depend on cartId 
@@ -92,10 +125,11 @@ exports.checkoutComplete = asyncHandler( async(req, res, next)=>{
     }
 
     if(event.type === 'checkout.session.completed'){
-        console.log(event.data.object)
         res.json(event.data.object)
+        createOrder(event.data.object)
     }
 
+    res.status(200).json({received:true})
 })
 
 exports.setFilterObj = asyncHandler (async (req, res, next )=>{
