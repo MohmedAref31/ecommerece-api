@@ -79,6 +79,24 @@ exports.createCheckoutSession = asyncHandler(async(req, res, next)=>{
 
 })
 
+exports.checkoutComplete = asyncHandler( async(req, res, next)=>{
+    const sig = req.headers['stripe-signature'];
+
+    let event;
+  
+    try {
+      event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECERET);
+    } catch (err) {
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+      
+    }
+
+    if(event.type === 'checkout.session.completed'){
+        console.log(event.data.object)
+    }
+
+})
+
 exports.setFilterObj = asyncHandler (async (req, res, next )=>{
     if(req.user.role === 'user')
         req.filterObj = {user:req.user._id}
