@@ -93,6 +93,7 @@ exports.checkoutComplete = asyncHandler( async(req, res, next)=>{
 
     if(event.type === 'checkout.session.completed'){
         console.log(event.data.object)
+        res.json(event.data.object)
     }
 
 })
