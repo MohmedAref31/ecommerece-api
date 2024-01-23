@@ -28,6 +28,8 @@ const { checkoutComplete } = require('./controllers/order.controller');
 // db connection
 dbConnection();
 
+app.post('/webhook-checkout', express.raw({type:"application/json"}), checkoutComplete)
+
 // middlewares
 app.use(express.json());
 app.use(express.static(path.join(__dirname,"uploads")));
@@ -36,7 +38,6 @@ app.use(morgan("dev"));
 // mount routes
 app.use("/api", routes);
 
-app.post('/webhook-checkout', express.raw({type:"application/json"}), checkoutComplete)
 
 // error handler
 
