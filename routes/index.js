@@ -1,7 +1,4 @@
-
-const express = require('express');
 const router = require("express").Router();
-const bodyParser = require("body-parser")
 
 const ErrorClass = require("../utiles/ErrorClass.utiles");
 const categoryRoutes = require("./category.route");
@@ -16,23 +13,21 @@ const reviewRoutes = require("./review.route");
 const couponRoutes = require("./coupon.route");
 const cartRoutes = require("./cart.route");
 const orderRoutes = require("./order.route");
-const { checkoutComplete } = require("../controllers/order.controller");
 
 router.use("/auth", authRoutes);
 router.use("/product", productRoutes);
 
-
 router.use("/user", userRoutes);
-router.use("/wishlist",wishlistRoutes);
-router.use("/address",addressRoutes);
+router.use("/wishlist", wishlistRoutes);
+router.use("/address", addressRoutes);
 
 router.use("/category", categoryRoutes);
 router.use("/subcategory", subcategoryRoutes);
 router.use("/brand", brandRoutes);
-router.use("/review",reviewRoutes)
-router.use("/coupon", couponRoutes)
-router.use("/cart", cartRoutes)
-router.use("/order", orderRoutes)
+router.use("/review", reviewRoutes);
+router.use("/coupon", couponRoutes);
+router.use("/cart", cartRoutes);
+router.use("/order", orderRoutes);
 
 // router.post('/webhooks/checkoutComplete',express.raw({}), checkoutComplete)
 

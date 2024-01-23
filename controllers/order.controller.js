@@ -131,7 +131,7 @@ exports.checkoutComplete = asyncHandler( async(req, res, next)=>{
       createOrder(event.data.object);
     }
   
-    res.status(200).json({ received: true , data:event.data.object });
+    res.status(200).json({ received: true });
 })
 
 exports.setFilterObj = asyncHandler (async (req, res, next )=>{
