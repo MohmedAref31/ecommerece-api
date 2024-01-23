@@ -19,7 +19,11 @@ app.options('*', cors())
 app.use(compression())
 
 const routes = require("./routes");
+
+
+
 const { errorHandler } = require("./middlewares/errorHandler");
+const { checkoutComplete } = require('./controllers/order.controller');
 
 // db connection
 dbConnection();
@@ -31,6 +35,8 @@ app.use(morgan("dev"));
 
 // mount routes
 app.use("/api", routes);
+
+app.post('/webhook-checkout', express.raw({type:"application/json"}), checkoutComplete)
 
 // error handler
 

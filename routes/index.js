@@ -1,7 +1,7 @@
 
 const express = require('express');
 const router = require("express").Router();
-
+const bodyParser = require("body-parser")
 
 const ErrorClass = require("../utiles/ErrorClass.utiles");
 const categoryRoutes = require("./category.route");
@@ -33,7 +33,9 @@ router.use("/review",reviewRoutes)
 router.use("/coupon", couponRoutes)
 router.use("/cart", cartRoutes)
 router.use("/order", orderRoutes)
-router.post('/webhooks/checkoutComplete',express.raw({type: 'application/json'}), checkoutComplete)
+
+// router.post('/webhooks/checkoutComplete',express.raw({}), checkoutComplete)
+
 router.all("*", (req, res, next) => {
   next(
     new ErrorClass(`sorry there is no such a route ${req.originalUrl}`, 404)
