@@ -78,7 +78,7 @@ exports.updateCartItemQuantity = asyncHandler(async (req, res, next) => {
   if (!cart) next(new ClassError("there is no cart you", 404));
 
   const itemIndex = cart.cartItems.findIndex(
-    (item) => item._id.toString() === req.params.id
+    (item) => item.product.toString() === req.params.id
   );
   if (itemIndex > -1) {
     const item = cart.cartItems[itemIndex];
@@ -90,7 +90,7 @@ exports.updateCartItemQuantity = asyncHandler(async (req, res, next) => {
 
     cart.cartItems[itemIndex] = item;
   } else {
-    next(new ClassError(`there is no item with this id $req.params.id}`, 404));
+    next(new ClassError(`there is no item with this id ${req.params.id}}`, 404));
   }
   console.log(calcTotalPrice(cart), cart);
   cart.totalCartPrice = calcTotalPrice(cart);

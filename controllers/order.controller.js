@@ -36,7 +36,7 @@ const createOrder = async (session)=>{
        await Product.bulkWrite(bulkOptions,{});
     
         // clear the cart with cartId  
-       await Cart.findByIdAndDelete(cartId) 
+        await Cart.findByIdAndDelete(cartId) 
         }
     
 }
