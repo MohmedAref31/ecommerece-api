@@ -8,7 +8,7 @@ const ClassError = require("../utiles/ErrorClass.utiles");
 const calcTotalPrice = (cart) => {
   let totalPrice = 0;
   cart.cartItems.forEach((item) => {
-    totalPrice += item.price;
+    totalPrice += item.quantity * item.price;
   });
   
   return totalPrice;
