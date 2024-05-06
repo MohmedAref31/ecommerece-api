@@ -10,7 +10,7 @@ const calcTotalPrice = (cart) => {
   cart.cartItems.forEach((item) => {
     totalPrice += (item.price * item.quantity).toFixed(2);
   });
-  
+
   return totalPrice;
 };
 
@@ -38,6 +38,9 @@ exports.addToCart = asyncHandler(async (req, res, next) => {
       // increase item quantity by 1 if
       cart.cartItems[ItemIndex].quantity += 1;
       cart.cartItems[ItemIndex].price = product.price;
+      cart.cartItems[ItemIndex].totalPrice = (
+        product.price * cart.cartItems[ItemIndex].quantity
+      ).fixed(2);
     } else {
       cart.cartItems.push({ product: productId, color, price: product.price });
     }
@@ -85,11 +88,14 @@ exports.updateCartItemQuantity = asyncHandler(async (req, res, next) => {
     const priceForOnePiece = (item.price / item.quantity).toFixed(2);
     console.log(priceForOnePiece);
     item.quantity = req.body.quantity;
-    item.price = (priceForOnePiece * item.quantity).toFixed(2);
+    item.totalPrice = (priceForOnePiece * item.quantity).toFixed(2);
+    item.price = priceForOnePiece.toFixed(2);
 
     cart.cartItems[itemIndex] = item;
   } else {
-    next(new ClassError(`there is no item with this id ${req.params.id}}`, 404));
+    next(
+      new ClassError(`there is no item with this id ${req.params.id}}`, 404)
+    );
   }
   console.log(calcTotalPrice(cart), cart);
   cart.totalCartPrice = calcTotalPrice(cart);
@@ -98,14 +104,22 @@ exports.updateCartItemQuantity = asyncHandler(async (req, res, next) => {
 });
 
 exports.applyCoupon = asyncHandler(async (req, res, next) => {
-  const coupon = await Coupon.findOne({ name: req.body.coupon,expiryDate:{$gt:Date.now()} });
-  if(!coupon)
-    next(new ClassError(`this coupon "${req.body.coupon}" is expired or invalid!!`,400));
+  const coupon = await Coupon.findOne({
+    name: req.body.coupon,
+    expiryDate: { $gt: Date.now() },
+  });
+  if (!coupon)
+    next(
+      new ClassError(
+        `this coupon "${req.body.coupon}" is expired or invalid!!`,
+        400
+      )
+    );
 
   const cart = await Cart.findById(req.params.id);
-next(new ClassError(`there is no cart for this id ${req.params.id}`,400));
+  next(new ClassError(`there is no cart for this id ${req.params.id}`, 400));
   cart.totalCartPriceAfterDiscount =
     cart.totalCartPrice - (cart.totalCartPrice * coupon.discount) / 100;
 
- cart.save().then(res.json({status:"success",data:cart}))
+  cart.save().then(res.json({ status: "success", data: cart }));
 });
