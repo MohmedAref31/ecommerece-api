@@ -85,12 +85,13 @@ exports.createCheckoutSession = asyncHandler(async(req, res, next)=>{
         // get order price from the cart and check if coupon applied;
         const price = cart.totalCartPriceAfterDiscount?cart.totalCartPriceAfterDiscount:cart.totalCartPrice;
         
+console.log(price, req.body)
 
         const session = await stripe.checkout.sessions.create({
             line_items:[
                 {
                    price_data:{
-                    currency: 'egp',
+                    currency: 'usd',
                     unit_amount:price * 100,
                     product_data: {
                         name: 'T-shirt',
@@ -108,6 +109,7 @@ exports.createCheckoutSession = asyncHandler(async(req, res, next)=>{
             client_reference_id:cartId,
             metadata:req.body.shippingAddress
         })
+
 
     res.send({status:"success",data:session})
 
