@@ -85,11 +85,11 @@ exports.updateCartItemQuantity = asyncHandler(async (req, res, next) => {
   if (itemIndex > -1) {
     const item = cart.cartItems[itemIndex];
     // get price for one piece of an item ;
-    const priceForOnePiece = (item.price / item.quantity).toFixed(2);
-    console.log(priceForOnePiece);
+    // const priceForOnePiece = (item.price / item.quantity).toFixed(2);
+    // console.log(priceForOnePiece);
     item.quantity = req.body.quantity;
-    item.totalPrice = (priceForOnePiece * item.quantity).toFixed(2);
-    item.price = priceForOnePiece.toFixed(2);
+    item.totalPrice = (item.price * item.quantity).toFixed(2);
+    // item.price = priceForOnePiece.toFixed(2);
 
     cart.cartItems[itemIndex] = item;
   } else {
