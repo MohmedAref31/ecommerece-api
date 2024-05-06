@@ -40,7 +40,7 @@ exports.addToCart = asyncHandler(async (req, res, next) => {
       cart.cartItems[ItemIndex].price = product.price;
       cart.cartItems[ItemIndex].totalPrice = (
         product.price * cart.cartItems[ItemIndex].quantity
-      ).fixed(2);
+      ).toFixed(2);
     } else {
       cart.cartItems.push({ product: productId, color, price: product.price });
     }
@@ -84,12 +84,9 @@ exports.updateCartItemQuantity = asyncHandler(async (req, res, next) => {
   );
   if (itemIndex > -1) {
     const item = cart.cartItems[itemIndex];
-    // get price for one piece of an item ;
-    // const priceForOnePiece = (item.price / item.quantity).toFixed(2);
-    // console.log(priceForOnePiece);
+
     item.quantity = req.body.quantity;
     item.totalPrice = (item.price * item.quantity).toFixed(2);
-    // item.price = priceForOnePiece.toFixed(2);
 
     cart.cartItems[itemIndex] = item;
   } else {
