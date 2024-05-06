@@ -18,4 +18,4 @@ router.route("/").get(allowedTo("user", "admin"),setFilterObj, getAllOrders);
 router.route("/:id").get(allowedTo("user", "admin"), getOrderById);
 router.route('/:id/paid').put(allowedTo("admin"), updateOrderToPaid)
 router.route('/:id/delivered').put(allowedTo("admin"), updateOrderToDelivered)
-module.exports = router;
+module.exports = router; 

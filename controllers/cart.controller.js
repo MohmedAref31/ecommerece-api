@@ -8,10 +8,12 @@ const ClassError = require("../utiles/ErrorClass.utiles");
 const calcTotalPrice = (cart) => {
   let totalPrice = 0;
   cart.cartItems.forEach((item) => {
-    totalPrice += (item.price * item.quantity).toFixed(2);
+    console.log(item)
+    totalPrice += item.price * item.quantity;
   });
 
-  return totalPrice;
+  // console.log(totalPrice)
+  return totalPrice.toFixed(2);
 };
 
 exports.addToCart = asyncHandler(async (req, res, next) => {
@@ -25,7 +27,7 @@ exports.addToCart = asyncHandler(async (req, res, next) => {
   if (!cart) {
     await Cart.create({
       user: req.user._id,
-      cartItems: [{ product: productId, color, price: product.price }],
+      cartItems: [{ product: productId, color, price: product.price, totalPrice: product.price}],
     });
   } else {
     // check if product is already in cart and the color is the same
@@ -47,7 +49,7 @@ exports.addToCart = asyncHandler(async (req, res, next) => {
   }
 
   cart.totalCartPrice = calcTotalPrice(cart);
-
+  // console.log(cart,cart.totalCartPrice)
   await cart.save();
 
   res.send(cart);
@@ -94,7 +96,6 @@ exports.updateCartItemQuantity = asyncHandler(async (req, res, next) => {
       new ClassError(`there is no item with this id ${req.params.id}}`, 404)
     );
   }
-  console.log(calcTotalPrice(cart), cart);
   cart.totalCartPrice = calcTotalPrice(cart);
   await cart.save();
   res.status(200).json({ status: "SUCCESS", data: cart });
