@@ -8,7 +8,7 @@ const ClassError = require("../utiles/ErrorClass.utiles");
 const calcTotalPrice = (cart) => {
   let totalPrice = 0;
   cart.cartItems.forEach((item) => {
-    totalPrice += (item.quantity * item.price).toFixed(2);
+    totalPrice += (item.price * item.quantity).toFixed(2);
   });
   
   return totalPrice;
@@ -37,6 +37,7 @@ exports.addToCart = asyncHandler(async (req, res, next) => {
     if (ItemIndex > -1) {
       // increase item quantity by 1 if
       cart.cartItems[ItemIndex].quantity += 1;
+      cart.cartItems[ItemIndex].price = product.price;
     } else {
       cart.cartItems.push({ product: productId, color, price: product.price });
     }
