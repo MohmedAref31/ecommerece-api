@@ -13,7 +13,7 @@ const { authentication, allowedTo } = require("../middlewares/auth.middleware");
 
 router.use(authentication);
 router.route("/:cartId").post(allowedTo("user"), createCashOrder);
-router.route("/create-session/:cartId").get(allowedTo("user"), createCheckoutSession);
+router.route("/create-session/:cartId").post(allowedTo("user"), createCheckoutSession);
 router.route("/").get(allowedTo("user", "admin"),setFilterObj, getAllOrders);
 router.route("/:id").get(allowedTo("user", "admin"), getOrderById);
 router.route('/:id/paid').put(allowedTo("admin"), updateOrderToPaid)
