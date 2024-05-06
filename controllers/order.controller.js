@@ -78,6 +78,7 @@ exports.createCashOrder = asyncHandler( async (req,res,next)=>{
 exports.createCheckoutSession = asyncHandler(async(req, res, next)=>{
         // 1- get cart depend on cartId 
         const {cartId} = req.params;
+        const {successUrl, failUrl} = req.body
         const cart = await Cart.findById(cartId);
         if(!cart)
             next(new ErrorClass(`there is no cart for this id ${cartId}`,404));
@@ -101,8 +102,8 @@ exports.createCheckoutSession = asyncHandler(async(req, res, next)=>{
                 }
             ],
             mode:'payment',
-            success_url: `${req.protocol}://${req.get('host')}/order`,
-            cancel_url: `${req.protocol}://${req.get('host')}/cart`,
+            success_url:successUrl || `${req.protocol}://${req.get('host')}/order`,
+            cancel_url: failUrl || `${req.protocol}://${req.get('host')}/cart`,
             customer_email:req.user.email,
             client_reference_id:cartId,
             metadata:req.body.shippingAddress
