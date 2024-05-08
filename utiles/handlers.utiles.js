@@ -10,7 +10,7 @@ const Review = require("../models/review.model")
 
 exports.createDocument = (Model) =>
   asyncHandler(async (req, res) => {
-    console.log(req.file);
+    
     let data = {};
 
     // add slug field to req.body if there is name or title

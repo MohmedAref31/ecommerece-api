@@ -1,6 +1,5 @@
 const router = require("express").Router();
 
-
 const {
   createCategory,
   getCategories,
@@ -19,18 +18,38 @@ const {
 
 const subcategoryRoutes = require("./subcategory.route");
 
-const {authentication, allowedTo} = require("../middlewares/auth.middleware")
-
+const { authentication, allowedTo } = require("../middlewares/auth.middleware");
+const { uploadToCloud } = require("../middlewares/uploadToCloud");
+const { uploadSingleImage } = require("../middlewares/imageUpload.middleware");
 
 router
   .route("/")
-  .post(authentication,allowedTo("admin"),createCategoryValidate,uploadImage,resizeImage, createCategory)
+  .post(
+    authentication,
+    allowedTo("admin"),
+    createCategoryValidate,
+    uploadSingleImage("image"),
+    uploadToCloud,
+    createCategory
+  )
   .get(getCategories);
 router
   .route("/:id")
   .get(getCategoryValidate, getCategoryWithId)
-  .put(authentication,allowedTo("admin"),updateCategoryValidate,uploadImage,resizeImage, updateCategory)
-  .delete(authentication,allowedTo("admin"),deleteCategoryValidate, deleteCategory);
+  .put(
+    authentication,
+    allowedTo("admin"),
+    updateCategoryValidate,
+    uploadImage,
+    resizeImage,
+    updateCategory
+  )
+  .delete(
+    authentication,
+    allowedTo("admin"),
+    deleteCategoryValidate,
+    deleteCategory
+  );
 
-router.use('/:categoryId/subcategory',subcategoryRoutes )
+router.use("/:categoryId/subcategory", subcategoryRoutes);
 module.exports = router;

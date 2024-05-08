@@ -23,9 +23,11 @@ const {
 
 const {uploadImage, resizeImage}  = require("../controllers/user.controller");
 const { authentication, allowedTo } = require("../middlewares/auth.middleware");
+const { uploadSingleImage } = require("../middlewares/imageUpload.middleware");
+const { uploadToCloud } = require("../middlewares/uploadToCloud");
 
 router.get("/getMe",authentication,getMe,getUserWithId)
-router.put("/updateMe",authentication,uploadImage,resizeImage,getMe,updateUserValidate, updateMe);
+router.put("/updateMe",authentication,uploadSingleImage("profileImage"),uploadToCloud,getMe,updateUserValidate, updateMe);
 router.put("/updateMyPassword",authentication,getMe,updateUserPasswordValidate,updateMyPassword)
 
 router.use(authentication,allowedTo("admin"))
@@ -37,7 +39,7 @@ router
 router
   .route("/:id")
   .get(getUserValidate, getUserWithId)
-  .put(uploadImage,resizeImage,updateUserValidate, updateUser)
+  .put(uploadSingleImage("profileImage"),uploadToCloud,updateUserValidate, updateUser)
   .delete(deleteUserValidate, deleteUser);
 
 
