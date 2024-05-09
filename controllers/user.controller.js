@@ -86,6 +86,7 @@ exports.updateMe = asyncHandler(async (req, res, next) => {
     id,
     {
       username: req.body.username,
+      name: req.body.name,
       email: req.body.email,
       phone: req.body.phone,
       profileImage: req.body.image,
@@ -116,5 +117,5 @@ exports.updateMyPassword = asyncHandler(async (req, res) => {
   await user.save();
 
   const token = generateToken({id})
-  res.josn({token});
+  res.json({token});
 });

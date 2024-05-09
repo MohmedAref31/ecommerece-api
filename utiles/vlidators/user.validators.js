@@ -75,6 +75,14 @@ exports.updateUserValidate = [
     .isString()
     .withMessage("User name must be string")
     .isLength({ min: 6 })
+    .withMessage("Too short Username")
+    .isLength({ max: 20 })
+    .withMessage("Too long Username"),
+  check("name")
+    .optional()
+    .isString()
+    .withMessage("User name must be string")
+    .isLength({ min: 2 })
     .withMessage("Too short User name")
     .isLength({ max: 20 })
     .withMessage("Too long User name"),
