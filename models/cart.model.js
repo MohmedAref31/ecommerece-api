@@ -21,19 +21,39 @@ const cartSchema = new mongoose.Schema(
         color: String,
         price: {
           type: Number,
-          default:0
+          default: 0,
         },
         totalPrice: {
-            type: Number,
-            default:0
-          },
+          type: Number,
+          default: 0,
+        },
       },
     ],
     totalCartPrice: Number,
     totalCartPriceAfterDiscount: { type: Number, default: undefined },
+    coupon: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Coupon",
+    },
   },
   { timestamps: true }
 );
+
+cartSchema.pre(/^find/, function (next) {
+  this.populate("coupon");
+  next();
+});
+
+cartSchema.pre("save", async function (next) {
+  const cart = await this.populate("coupon");
+  if (cart?.coupon) {
+    cart.totalCartPriceAfterDiscount = (
+      cart.totalCartPrice -
+      cart.totalCartPrice * (cart.coupon.discount / 100)
+    ).toFixed(2);
+  }
+  next();
+});
 
 const Cart = mongoose.model("Cart", cartSchema);
 

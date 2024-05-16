@@ -5,11 +5,12 @@ const {
   getLoggedUserCart,
   deleteCartItem,
   updateCartItemQuantity,
+  applyCoupon,
 } = require("../controllers/cart.controller");
 const { allowedTo, authentication } = require("../middlewares/auth.middleware");
 
 router.use(authentication, allowedTo("user"));
 router.route("/").post(addToCart).get(getLoggedUserCart);
 router.route("/:id").delete(deleteCartItem).put(updateCartItemQuantity);
-
+router.post("/:cartId/applyCoupon",applyCoupon);
 module.exports = router;

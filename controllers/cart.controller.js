@@ -8,7 +8,7 @@ const ClassError = require("../utiles/ErrorClass.utiles");
 const calcTotalPrice = (cart) => {
   let totalPrice = 0;
   cart.cartItems.forEach((item) => {
-    console.log(item)
+    console.log(item);
     totalPrice += item.price * item.quantity;
   });
 
@@ -27,7 +27,14 @@ exports.addToCart = asyncHandler(async (req, res, next) => {
   if (!cart) {
     cart = await Cart.create({
       user: req.user._id,
-      cartItems: [{ product: productId, color, price: product.price, totalPrice: product.price}],
+      cartItems: [
+        {
+          product: productId,
+          color,
+          price: product.price,
+          totalPrice: product.price,
+        },
+      ],
     });
   } else {
     // check if product is already in cart and the color is the same
@@ -49,17 +56,16 @@ exports.addToCart = asyncHandler(async (req, res, next) => {
   }
 
   cart.totalCartPrice = calcTotalPrice(cart);
-  // console.log(cart,cart.totalCartPrice)
+  
   await cart.save();
 
   res.send(cart);
 });
 
 exports.getLoggedUserCart = asyncHandler(async (req, res, next) => {
-  const cart = await Cart.findOne({ user: req.user._id }).populate(
-    "cartItems.product",
-    "title imageCover -category"
-  );
+  const cart = await Cart.findOne({ user: req.user._id })
+    .populate("cartItems.product", "title imageCover -category")
+    .populate("coupon");
   if (!cart) next(new ClassError("there is no cart you", 404));
   res.status(200).json({ status: "SUCCESS", data: cart });
 });
@@ -78,7 +84,7 @@ exports.deleteCartItem = asyncHandler(async (req, res, next) => {
 });
 
 exports.updateCartItemQuantity = asyncHandler(async (req, res, next) => {
-  const cart = await Cart.findOne({ user: req.user._id });
+  const cart = await Cart.findOne({ user: req.user._id }).populate("coupon");
   if (!cart) next(new ClassError("there is no cart you", 404));
 
   const itemIndex = cart.cartItems.findIndex(
@@ -97,6 +103,8 @@ exports.updateCartItemQuantity = asyncHandler(async (req, res, next) => {
     );
   }
   cart.totalCartPrice = calcTotalPrice(cart);
+
+
   await cart.save();
   res.status(200).json({ status: "SUCCESS", data: cart });
 });
@@ -114,10 +122,19 @@ exports.applyCoupon = asyncHandler(async (req, res, next) => {
       )
     );
 
-  const cart = await Cart.findById(req.params.id);
-  next(new ClassError(`there is no cart for this id ${req.params.id}`, 400));
-  cart.totalCartPriceAfterDiscount =
-    cart.totalCartPrice - (cart.totalCartPrice * coupon.discount) / 100;
+  const cart = await Cart.findById(req.params.cartId);
+  if (!cart)
+    next(new ClassError(`there is no cart for this id ${req.params.id}`, 400));
+  cart.coupon = coupon._id;
 
-  cart.save().then(res.json({ status: "success", data: cart }));
+  console.log(cart.totalCartPrice, coupon.discount);
+  cart.totalCartPriceAfterDiscount = (
+    cart.totalCartPrice -
+    cart.totalCartPrice * (coupon.discount / 100)
+  ).toFixed(2);
+
+  cart
+    .save()
+    .then(() => res.json({ status: "success", data: cart }))
+    .catch((e) => next(e));
 });
