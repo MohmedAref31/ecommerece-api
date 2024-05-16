@@ -35,13 +35,8 @@ exports.getAll = (Model, name = "not product") =>
       .sort()
       .filter()
       .search(name)
-      // .paginate(countDocuments);
+      .paginate(countDocuments);
     const documents = await apiFeatures.mongooseQuery;
-
-    let apiPagination = new ApiFeatures ().paginate(documents.length)
-    
-    console.log(apiPagination.pagination)
-
     res.json({
       result: documents.length,
       pagination: apiFeatures.pagination,
