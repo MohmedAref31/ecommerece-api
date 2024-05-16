@@ -82,8 +82,8 @@ class ApiFeatures {
     if (page > 1) {
       pagination.previusPage = page - 1;
     }
-    this.pagination = pagination;
-    this.mongooseQuery = this.mongooseQuery.limit(limit).skip(skip);
+    this.pagination = pagination; 
+    this.mongooseQuery = this.mongooseQuery.limit(limit).skip(skip); 
     return this;
   }
 }

@@ -35,16 +35,19 @@ exports.getAll = (Model, name = "not product") =>
       .sort()
       .filter()
       .search(name)
-      .paginate(countDocuments);
-
+      // .paginate(countDocuments);
     const documents = await apiFeatures.mongooseQuery;
+
+    let apiPagination = new ApiFeatures ().paginate(documents.length)
+    
+    console.log(apiPagination.pagination)
 
     res.json({
       result: documents.length,
       pagination: apiFeatures.pagination,
       data: documents,
     });
-  });
+  }); 
 
 exports.getDocumentById = (Model) =>
   asyncHandler(async (req, res, next) => {
@@ -60,13 +63,13 @@ exports.getDocumentById = (Model) =>
     res.send({ result: 1, data: document });
   });
 
-exports.updateDocumentById = (Model) =>
+exports.updateDocumentById = (Model) => 
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
     let data = {};
     if (req.body.name) data = { ...req.body, slug: slugify(req.body.name) };
     else if (req.body.title)
-      data = { ...req.body, slug: slugify(req.body.title) };
+      data = { ...req.body, slug: slugify(req.body.title) }; 
     else data = { ...req.body };
 
     const document = await Model.findByIdAndUpdate(id, data, {

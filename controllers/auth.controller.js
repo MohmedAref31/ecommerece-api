@@ -1,6 +1,5 @@
 const crypto = require("crypto");
 
-
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcryptjs");
 
@@ -8,12 +7,9 @@ const User = require("../models/user.model");
 const ErrorClass = require("../utiles/ErrorClass.utiles");
 const { sendEmail } = require("../utiles/sendEmail.utiles");
 
-const {generateToken} = require("../utiles/generateToken.utiles")
+const { generateToken } = require("../utiles/generateToken.utiles");
 
- const hash = (text) => crypto.createHash("sha256").update(text).digest("hex");
-
-
-
+const hash = (text) => crypto.createHash("sha256").update(text).digest("hex");
 
 exports.signup = asyncHandler(async (req, res) => {
   const user = new User({
@@ -46,13 +42,39 @@ exports.login = asyncHandler(async (req, res) => {
   res.send({ data: user, token });
 });
 
+exports.googleAuth = asyncHandler(async (req, res, next) => {
+  const { email, username, profileImage } = req.body;
+
+  let user = await User.findOne({ email });
+
+  if (user) {
+    const token = generateToken({ id: user._id });
+    res.json({ data: user, token });
+  } else {
+    const password = (Math.random() * 10000).toString(32).slice(-8);
+    console.log(password)
+    user = new User({
+      username,
+      password,
+      email,
+      profileImage,
+    });
+
+    await user.save();
+
+    const token = generateToken({ id: user._id });
+
+    res.json({ data: user, token });
+  }
+});
+
 exports.forgetPassword = asyncHandler(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
 
   if (!user) next(new ErrorClass("this email is not exist"));
 
   const resetCode = (Math.floor(Math.random() * 900000) + 100000).toString();
- 
+
   const resetCodeHashed = hash(resetCode);
   console.log(resetCode);
   console.log(resetCodeHashed);
@@ -124,5 +146,5 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
 
   const token = generateToken({ id: user._id });
 
-  res.json({ token:token });
+  res.json({ token: token });
 });
