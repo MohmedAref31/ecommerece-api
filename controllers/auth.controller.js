@@ -58,6 +58,7 @@ exports.googleAuth = asyncHandler(async (req, res, next) => {
       password,
       email,
       profileImage,
+      method:"google",
     });
 
     await user.save();

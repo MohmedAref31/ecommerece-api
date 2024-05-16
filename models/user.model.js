@@ -52,6 +52,10 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    method:{
+      type:String,
+      default:'register'
+    },
     resetCode: String,
     resetCodeTime: Date,
     resetCodeUsed: Boolean,
