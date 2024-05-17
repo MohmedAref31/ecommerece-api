@@ -60,7 +60,7 @@ const productSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Brand",
     },
-    imageCover: {
+    image: {
       type: String,
       required: [true, "Product cover image must be provided"],
       trim: true,

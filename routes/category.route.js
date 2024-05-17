@@ -27,9 +27,9 @@ router
   .post(
     authentication,
     allowedTo("admin"),
-    createCategoryValidate,
     uploadSingleImage("image"),
     uploadToCloud,
+    createCategoryValidate,
     createCategory
   )
   .get(getCategories);
@@ -39,9 +39,9 @@ router
   .put(
     authentication,
     allowedTo("admin"),
+    uploadSingleImage("image"),
+    uploadToCloud,
     updateCategoryValidate,
-    uploadImage,
-    resizeImage,
     updateCategory
   )
   .delete(
@@ -51,5 +51,5 @@ router
     deleteCategory
   );
 
-router.use("/:categoryId/subcategory", subcategoryRoutes);
+router.use("/:categoryId/subcategory", subcategoryRoutes); 
 module.exports = router;

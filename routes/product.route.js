@@ -10,7 +10,6 @@ const {
   resizeImages,
 } = require("../controllers/product.controller");
 
-
 const {
   createProductValidate,
   updateProductValidate,
@@ -18,19 +17,32 @@ const {
   deleteProductValidate,
 } = require("../utiles/vlidators/product.validators");
 
-const { authentication,allowedTo } = require("../middlewares/auth.middleware");
+const { authentication, allowedTo } = require("../middlewares/auth.middleware");
+const { uploadSingleImage } = require("../middlewares/imageUpload.middleware");
+const { uploadToCloud } = require("../middlewares/uploadToCloud");
 
+router.get("/", getProducts);
+router.get("/:id", getProductValidate, getProductWithId);
 
-router.get("/",getProducts) 
-router.get("/:id",getProductValidate, getProductWithId)
-
-router.use(authentication)
-router.use(allowedTo("admin"))
+router.use(authentication);
+router.use(allowedTo("admin"));
 // ! protected routes
-router.route("/").post(uploadImages,resizeImages,createProductValidate, createProduct);
+router
+  .route("/")
+  .post(
+    uploadSingleImage("image"),
+    uploadToCloud,
+    createProductValidate,
+    createProduct
+  );
 
 router
   .route("/:id")
-  .put(uploadImages,resizeImages,updateProductValidate, updateProduct)
-  .delete(allowedTo("admin"),deleteProductValidate, deleteProduct);
+  .put(
+    uploadSingleImage("image"),
+    uploadToCloud,
+    updateProductValidate,
+    updateProduct
+  )
+  .delete(allowedTo("admin"), deleteProductValidate, deleteProduct);
 module.exports = router;

@@ -98,7 +98,7 @@ exports.createProductValidate = [
     .optional()
     .isArray()
     .withMessage("images must be an array of available images"),
-  check("imageCover")
+  check("image")
     .notEmpty()
     .withMessage("cover image must be provided")
     .isString(),
